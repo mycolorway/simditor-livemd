@@ -21,13 +21,12 @@ class SimditorMarkdown extends Plugin
         42: "*"
         43: "+"
         45: "-"
-      cmd: /^\*|^\+|^\-/
+      cmd: /^\*{1}$|^\+{1}$|^\-{1}$/
       block: true
       callback: =>
-        toolbar.find(".toolbar-item-ul").mousedown()
         container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
         container.text ""
-        @editor.selection.setRangeAtStartOf container
+        toolbar.find(".toolbar-item-ul").mousedown()
 
     # Ordered list
     @addInputHook
@@ -43,13 +42,12 @@ class SimditorMarkdown extends Plugin
         55: "7"
         56: "8"
         57: "9"
-      cmd: /^[0-9]\./
+      cmd: /^[0-9]\.{1}$/
       block: true
       callback: =>
-        toolbar.find(".toolbar-item-ol").mousedown()
         container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
         container.text ""
-        @editor.selection.setRangeAtStartOf container
+        toolbar.find(".toolbar-item-ol").mousedown()
 
     # Header
     @addInputHook
@@ -61,6 +59,7 @@ class SimditorMarkdown extends Plugin
         level = if cmd.length > 3 then 3 else cmd.length
         toolbar.find(".toolbar-menu-title .menu-item-h#{level}").click()
         container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
+
         # cmd like "##"
         if /^#+$/.test cmd
           container.html cmd.replace(hook.cmd, "&nbsp;")
@@ -74,7 +73,7 @@ class SimditorMarkdown extends Plugin
     @addInputHook
       key:
         62: ">"
-      cmd: /^>/
+      cmd: /^>{1}$/
       block: true
       callback: (e, hook, cmd) =>
         container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
@@ -82,6 +81,27 @@ class SimditorMarkdown extends Plugin
         toolbar.find(".toolbar-item-blockquote").mousedown()
         @editor.selection.setRangeAtStartOf container
 
+    # Code
+    @addInputHook
+      key:
+        96: "`"
+      cmd: /^`{3}$/
+      block: true
+      callback: (e, hook, cmd) =>
+        container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
+        container.text ""
+        toolbar.find(".toolbar-item-code").mousedown()
+
+    # Horizontal rule
+    @addInputHook
+      key:
+        96: "`"
+      cmd: /^\*{3,}$|^\-{3,}$/
+      block: true
+      callback: (e, hook, cmd) =>
+        container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
+        container.html cmd.replace(hook.cmd, "<br/>")
+        toolbar.find(".toolbar-item-hr").mousedown()
 
   _onKeyPress: (e) ->
     if @editor.triggerHandler(e) is false
