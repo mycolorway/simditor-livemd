@@ -26,8 +26,8 @@ class SimditorMarkdown extends Plugin
       callback: =>
         toolbar.find(".toolbar-item-ul").mousedown()
         container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
-        container.text("")
-        @editor.selection.setRangeAtStartOf container
+        container.text ""
+        @editor.selection.setRangeAtEndOf container
 
     # Ordered list
     @addInputHook
@@ -48,8 +48,27 @@ class SimditorMarkdown extends Plugin
       callback: =>
         toolbar.find(".toolbar-item-ol").mousedown()
         container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
-        container.text("")
-        @editor.selection.setRangeAtStartOf container
+        container.text ""
+        @editor.selection.setRangeAtEndOf container
+
+    # HEADER
+    @addInputHook
+      key:
+        35: "#"
+      cmd: /^#+/
+      block: true
+      callback: (e, hook, cmd) =>
+        level = if cmd.length > 3 then 3 else cmd.length
+        toolbar.find(".toolbar-menu-title .menu-item-h#{level}").click()
+        container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
+        # cmd like "##"
+        if /^#+$/.test cmd
+          container.html cmd.replace(hook.cmd, "&nbsp;")
+          @editor.selection.setRangeAtStartOf container
+        # cmd like "##title"
+        else
+          container.text cmd.replace(hook.cmd, "")
+          @editor.selection.setRangeAtEndOf container
 
   _onKeyPress: (e) ->
     if @editor.triggerHandler(e) is false
