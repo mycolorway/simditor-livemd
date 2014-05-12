@@ -1,0 +1,31 @@
+{
+  "name": "simple-uploader",
+  "version": "1.0.0",
+  "homepage": "https://github.com/mycolorway/simple-uploader",
+  "authors": [
+    "farthinker <farthinker@gmail.com>"
+  ],
+  "description": "HTML5 upload logic without UI",
+  "main": "lib/uploader.js",
+  "keywords": [
+    "upload"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "vendor",
+    "Gruntfile.coffee",
+    "package.json",
+    "README.md"
+  ],
+  "_release": "1.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.0",
+    "commit": "e32e1a55fc85498cda422ccd220c55f6933e6827"
+  },
+  "_source": "https://github.com/mycolorway/simple-uploader.git",
+  "_target": "~1.0.0",
+  "_originalSource": "simple-uploader"
+}
