@@ -19,10 +19,34 @@ class SimditorMarkdown extends Plugin
     @addInputHook
       key:
         42: "*"
-      cmd: /^\*/
+        43: "+"
+        45: "-"
+      cmd: /^\*|^\+|^\-/
       block: true
       callback: =>
         toolbar.find(".toolbar-item-ul").mousedown()
+        container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
+        container.text("")
+        @editor.selection.setRangeAtStartOf container
+
+    # Ordered list
+    @addInputHook
+      key:
+        46: "."
+        48: "0"
+        49: "1"
+        50: "2"
+        51: "3"
+        52: "4"
+        53: "5"
+        54: "6"
+        55: "7"
+        56: "8"
+        57: "9"
+      cmd: /^[0-9]\./
+      block: true
+      callback: =>
+        toolbar.find(".toolbar-item-ol").mousedown()
         container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
         container.text("")
         @editor.selection.setRangeAtStartOf container
