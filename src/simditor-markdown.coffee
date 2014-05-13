@@ -11,7 +11,7 @@ class SimditorMarkdown extends Plugin
     @opts.markdown = @opts.markdown || @editor.textarea.data("markdown")
     return unless @opts.markdown
 
-    @editor.body.on("keypress", $.proxy(@_onKeyPress, @))
+    @editor.on("keypress", $.proxy(@_onKeyPress, @))
 
     toolbar = @editor.toolbar.list
 

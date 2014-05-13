@@ -738,7 +738,7 @@
     Formatter.prototype._allowedTags = ['br', 'a', 'img', 'b', 'strong', 'i', 'u', 'p', 'ul', 'ol', 'li', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'hr'];
 
     Formatter.prototype._allowedAttributes = {
-      img: ['src', 'alt', 'width', 'height', 'data-image-src', 'data-image-size', 'data-image-name'],
+      img: ['src', 'alt', 'width', 'height', 'data-origin-src', 'data-origin-size', 'data-origin-name'],
       a: ['href', 'target'],
       pre: ['data-lang'],
       p: ['data-indent'],
@@ -997,23 +997,18 @@
       }).addClass('simditor-paste-area').appendTo(this.editor.el);
       this.editor.on('valuechanged', function() {
         return _this.editor.body.find('hr, pre, .simditor-image, .simditor-table').each(function(i, el) {
-          var $el, formatted;
+          var $el;
           $el = $(el);
           if ($el.parent().is('blockquote') || $el.parent()[0] === _this.editor.body[0]) {
-            formatted = false;
             if ($el.next().length === 0) {
               $('<p/>').append(_this.editor.util.phBr).insertAfter($el);
-              formatted = true;
             }
             if ($el.prev().length === 0) {
               $('<p/>').append(_this.editor.util.phBr).insertBefore($el);
-              formatted = true;
             }
-            if (formatted) {
-              return setTimeout(function() {
-                return _this.editor.trigger('valuechanged');
-              }, 10);
-            }
+            return setTimeout(function() {
+              return _this.editor.trigger('valuechanged');
+            }, 10);
           }
         });
       });
@@ -3856,9 +3851,9 @@
           src: src,
           width: width,
           height: height,
-          'data-image-src': src,
-          'data-image-name': '图片',
-          'data-image-size': img.width + ',' + img.height
+          'data-origin-src': src,
+          'data-origin-name': '图片',
+          'data-origin-size': img.width + ',' + img.height
         });
         $wrapper.width(width).height(height);
         return callback(true);

@@ -1,4 +1,4 @@
 simditor-markdown
 =================
 
-a Simditor plugin for Markdown
+a markdown plugin for Simditor
