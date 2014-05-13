@@ -95,13 +95,15 @@ class SimditorMarkdown extends Plugin
     # Horizontal rule
     @addInputHook
       key:
-        96: "`"
+        42: "*"
+        45: "-"
       cmd: /^\*{3,}$|^\-{3,}$/
       block: true
       callback: (e, hook, cmd) =>
         container = $(@editor.selection.getRange().commonAncestorContainer.parentNode)
         container.html cmd.replace(hook.cmd, "<br/>")
         toolbar.find(".toolbar-item-hr").mousedown()
+
 
   _onKeyPress: (e) ->
     if @editor.triggerHandler(e) is false
