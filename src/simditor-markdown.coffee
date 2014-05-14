@@ -15,14 +15,13 @@ class SimditorMarkdown extends Plugin
           42: "*"
           43: "+"
           45: "-"
-        cmd: /^\*{1}\s|^\+{1}\s|^\-{1}\s/
+        cmd: /^\*{1}$|^\+{1}$|^\-{1}$/
         block: true
         callback: (e, hook, cmd, container) =>
           button = @editor.toolbar.findButton "ul"
           return if button is null
           e.preventDefault()
           container.textContent = cmd.replace(hook.cmd, "")
-          @editor.selection.setRangeAtEndOf container unless /^\*{1}\s$|^\+{1}\s$|^\-{1}\s$/.test cmd
           button.command "ol"
 
       # Ordered list
@@ -39,51 +38,42 @@ class SimditorMarkdown extends Plugin
           55: "7"
           56: "8"
           57: "9"
-        cmd: /^[0-9]\.{1}\s/
+        cmd: /^[0-9]\.{1}$/
         block: true
         callback: (e, hook, cmd, container) =>
           button = @editor.toolbar.findButton "ol"
           return if button is null
           e.preventDefault()
           container.textContent = cmd.replace(hook.cmd, "")
-          @editor.selection.setRangeAtEndOf container unless /^[0-9]\.{1}\s$/.test cmd
           button.command "ol"
 
       # Header
       title:
         key:
           35: "#"
-        cmd: /^#+\s/
+        cmd: /^#+$/
         block: true
         callback: (e, hook, cmd, container) =>
           level = if cmd.length > 3 then 3 else cmd.length
           button = @editor.toolbar.findButton "title"
           return if button is null
           e.preventDefault()
-          if /^#+\s$/.test cmd
-            $(container.parentNode).html cmd.replace(hook.cmd, "&nbsp;")
-            @editor.selection.setRangeAtStartOf container
-          else
-            container.textContent = cmd.replace(hook.cmd, "")
-            @editor.selection.setRangeAtEndOf container
+          $(container.parentNode).html cmd.replace(hook.cmd, "&nbsp;")
+          @editor.selection.setRangeAtStartOf container
           button.command "h#{level}"
 
       # Blockquote
       blockquote:
         key:
           62: ">"
-        cmd: /^>{1}\s/
+        cmd: /^>{1}$/
         block: true
         callback: (e, hook, cmd, container) =>
           button = @editor.toolbar.findButton "blockquote"
           return if button is null
           e.preventDefault()
           button.command()
-          if /^>{1}\s$/.test cmd
-            $(container.parentNode).html cmd.replace(hook.cmd, "<br/>")
-          else
-            container.textContent = cmd.replace(hook.cmd, "")
-            @editor.selection.setRangeAtEndOf container
+          $(container.parentNode).html cmd.replace(hook.cmd, "<br/>")
 
       # Code
       code:
