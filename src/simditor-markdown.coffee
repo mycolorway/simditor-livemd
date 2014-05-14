@@ -71,8 +71,8 @@ class SimditorMarkdown extends Plugin
           button = @editor.toolbar.findButton "blockquote"
           return if button is null
           e.preventDefault()
+          $(container.parentNode).html cmd.replace(hook.cmd, "&nbsp;")
           button.command()
-          $(container.parentNode).html cmd.replace(hook.cmd, "<br/>")
 
       # Code
       code:
@@ -164,7 +164,6 @@ class SimditorMarkdown extends Plugin
           e.preventDefault()
           container.textContent = ""
           params = cmd.match hook.cmd
-          console.log params
           text   = params[1] or params[3] or params[5]
           url    = params[2] or params[4] or params[6]
           button.command text, url
@@ -205,10 +204,7 @@ class SimditorMarkdown extends Plugin
       container = range.commonAncestorContainer
       cmd       = container.textContent
 
-      console.log cmd
-
       for hook in @_inputHooks
-        console.log hook.cmd,(hook.cmd instanceof RegExp and hook.cmd.test(cmd))
         if (hook.cmd instanceof RegExp and hook.cmd.test(cmd)) or hook.cmd is cmd
           break if hook.block and not $(container.parentNode).is("p, div")
 
