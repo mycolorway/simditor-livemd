@@ -3,6 +3,7 @@ class SimditorMarkdown extends Plugin
   opts:
     markdown: false
 
+
   constructor: (args...) ->
     super args...
     @editor = @widget
@@ -106,6 +107,54 @@ class SimditorMarkdown extends Plugin
           container.html cmd.replace(hook.cmd, "<br/>")
           button.command()
 
+      # Emphasis: italic
+      italic:
+        key:
+          42: "*"
+          95: "_"
+        cmd: /\*([^\*]+)\*$|_([^_]+)_$/
+        block: false
+        callback: (e, hook, cmd, container) =>
+          button = @editor.toolbar.findButton "italic"
+          return if button is null
+          e.preventDefault()
+          container.textContent = cmd.replace(hook.cmd, "$1$2")
+          range = document.createRange()
+          range.setStart container, cmd.match(hook.cmd).index
+          range.setEnd   container, cmd.length - 2
+          @editor.selection.selectRange range
+
+          if button.status $(range.commonAncestorContainer.parentNode)
+            @editor.selection.setRangeAtEndOf container
+          else
+            button.command()
+            @editor.selection.setRangeAtEndOf container
+            button.command()
+
+      # Emphasis: bold
+      bold:
+        key:
+          42: "*"
+          95: "_"
+        cmd: /\*{2}([^\*]+)\*{2}$|_{2}([^_]+)_{2}$/
+        block: false
+        callback: (e, hook, cmd, container) =>
+          button = @editor.toolbar.findButton "bold"
+          return if button is null
+          e.preventDefault()
+          container.textContent = cmd.replace(hook.cmd, "$1$2")
+          range = document.createRange()
+          range.setStart container, cmd.match(hook.cmd).index
+          range.setEnd   container, cmd.length - 4
+          @editor.selection.selectRange range
+
+          if button.status $(range.commonAncestorContainer.parentNode)
+            @editor.selection.setRangeAtEndOf container
+          else
+            button.command()
+            @editor.selection.setRangeAtEndOf container
+            button.command()
+
   _init: ->
     @opts.markdown = @opts.markdown || @editor.textarea.data("markdown")
     return unless @opts.markdown
@@ -116,7 +165,6 @@ class SimditorMarkdown extends Plugin
       @addInputHook config
 
 
-
   _onKeyPress: (e) ->
     # check the input hooks
     if e.which is 32
@@ -124,13 +172,11 @@ class SimditorMarkdown extends Plugin
       container = range.commonAncestorContainer
       cmd       = container.textContent
 
-      console.log "cmd",cmd
-
       for hook in @_inputHooks
         if (hook.cmd instanceof RegExp and hook.cmd.test(cmd)) or hook.cmd is cmd
           break if hook.block and not $(container.parentNode).is("p, div")
 
-          hook.callback(e, hook, cmd, range.commonAncestorContainer.parentNode)
+          hook.callback(e, hook, cmd, container)
           break
 
 
