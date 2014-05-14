@@ -15,14 +15,15 @@ class SimditorMarkdown extends Plugin
           42: "*"
           43: "+"
           45: "-"
-        cmd: /^\*{1}$|^\+{1}$|^\-{1}$/
+        cmd: /^\*{1}\s|^\+{1}\s|^\-{1}\s/
         block: true
         callback: (e, hook, cmd, container) =>
           button = @editor.toolbar.findButton "ul"
           return if button is null
           e.preventDefault()
-          container.text ""
-          button.command "ul"
+          container.textContent = cmd.replace(hook.cmd, "")
+          @editor.selection.setRangeAtEndOf container unless /^\*{1}\s$|^\+{1}\s$|^\-{1}\s$/.test cmd
+          button.command "ol"
 
       # Ordered list
       ol:
@@ -38,31 +39,32 @@ class SimditorMarkdown extends Plugin
           55: "7"
           56: "8"
           57: "9"
-        cmd: /^[0-9]\.{1}$/
+        cmd: /^[0-9]\.{1}\s/
         block: true
         callback: (e, hook, cmd, container) =>
           button = @editor.toolbar.findButton "ol"
           return if button is null
           e.preventDefault()
-          container.text ""
+          container.textContent = cmd.replace(hook.cmd, "")
+          @editor.selection.setRangeAtEndOf container unless /^[0-9]\.{1}\s$/.test cmd
           button.command "ol"
 
       # Header
       title:
         key:
           35: "#"
-        cmd: /^#+/
+        cmd: /^#+\s/
         block: true
         callback: (e, hook, cmd, container) =>
           level = if cmd.length > 3 then 3 else cmd.length
           button = @editor.toolbar.findButton "title"
           return if button is null
           e.preventDefault()
-          if /^#+$/.test cmd
-            container.html cmd.replace(hook.cmd, "&nbsp;")
+          if /^#+\s$/.test cmd
+            $(container.parentNode).html cmd.replace(hook.cmd, "&nbsp;")
             @editor.selection.setRangeAtStartOf container
           else
-            container.text cmd.replace(hook.cmd, "")
+            container.textContent = cmd.replace(hook.cmd, "")
             @editor.selection.setRangeAtEndOf container
           button.command "h#{level}"
 
@@ -70,15 +72,18 @@ class SimditorMarkdown extends Plugin
       blockquote:
         key:
           62: ">"
-        cmd: /^>{1}$/
+        cmd: /^>{1}\s/
         block: true
         callback: (e, hook, cmd, container) =>
           button = @editor.toolbar.findButton "blockquote"
           return if button is null
           e.preventDefault()
           button.command()
-          container.html cmd.replace(hook.cmd, "<br/>")
-          @editor.selection.setRangeAtStartOf container
+          if /^>{1}\s$/.test cmd
+            $(container.parentNode).html cmd.replace(hook.cmd, "<br/>")
+          else
+            container.textContent = cmd.replace(hook.cmd, "")
+            @editor.selection.setRangeAtEndOf container
 
       # Code
       code:
@@ -90,7 +95,7 @@ class SimditorMarkdown extends Plugin
           button = @editor.toolbar.findButton "code"
           return if button is null
           e.preventDefault()
-          container.text ""
+          container.textContent = ""
           button.command()
 
       # Horizontal rule
@@ -104,7 +109,7 @@ class SimditorMarkdown extends Plugin
           button = @editor.toolbar.findButton "hr"
           return if button is null
           e.preventDefault()
-          container.html cmd.replace(hook.cmd, "<br/>")
+          $(container.parentNode).html cmd.replace(hook.cmd, "<br/>")
           button.command()
 
       # Emphasis: italic
@@ -154,6 +159,44 @@ class SimditorMarkdown extends Plugin
             button.command()
             @editor.selection.setRangeAtEndOf container
             button.command()
+
+      # Link
+      link:
+        key:
+          40: "("
+          41: ")"
+          91: "["
+          93: "]"
+        cmd: /[^\!]\[(.+)\]\((.+)\)$|^\[(.+)\]\((.+)\)$|\<((.[^\[\]\(\)]+))\>$/
+        block: false
+        callback: (e, hook, cmd, container) =>
+          button = @editor.toolbar.findButton "link"
+          return if button is null
+          e.preventDefault()
+          container.textContent = ""
+          params = cmd.match hook.cmd
+          text   = params[1] or params[3] or params[5]
+          url    = params[2] or params[4] or params[6]
+          button.command text, url
+
+      # Image
+      link:
+        key:
+          33: "!"
+          40: "("
+          41: ")"
+          91: "["
+          93: "]"
+        cmd: /!\[(.+)\]\((.+)\)$/
+        block: false
+        callback: (e, hook, cmd, container) =>
+          button = @editor.toolbar.findButton "image"
+          return if button is null
+          e.preventDefault()
+          container.textContent = ""
+          params = cmd.match hook.cmd
+          button.command params[2]
+
 
   _init: ->
     @opts.markdown = @opts.markdown || @editor.textarea.data("markdown")
