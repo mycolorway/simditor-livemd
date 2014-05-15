@@ -125,12 +125,13 @@ class SimditorMarkdown extends Plugin
   _onKeyPress: (e) ->
     # check the input hooks
     if e.which is 32 or e.which is 13
-      container = @editor.selection.getRange().commonAncestorContainer
-      cmd       = container.textContent
+      range = @editor.selection.getRange()
+      container = range?.commonAncestorContainer
+      return unless range and container and container.nodeType == 3
 
-      return unless container.nodeName is "#text"
+      cmd = $.trim(container.textContent)
       for name, hook of @markdownConfigs
-        if hook.cmd instanceof RegExp and hook.cmd.test(cmd.trim())
+        if hook.cmd instanceof RegExp and hook.cmd.test(cmd)
           range = document.createRange()
           range.setStart container, 0
           range.setEnd   container, 0
