@@ -8,6 +8,7 @@ module.exports = (grunt) ->
       styles:
         options:
           style: 'expanded'
+          bundleExec: true
         files:
           'lib/simditor-markdown.css': 'src/simditor-markdown.scss'
     coffee:
