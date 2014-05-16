@@ -13,43 +13,51 @@ class SimditorMarkdown extends Plugin
       title:
         cmd: /^#+/
         block: true
-        callback: (hook, range, offset) =>
+        callback: (hook, range, match) =>
           button    = @editor.toolbar.findButton "title"
           return if button is null or button.disabled
+
+          offset    = range.startOffset
           container = range.commonAncestorContainer
-          length    = container.textContent.match(hook.cmd)[0].length
+          length    = match[0].length
           level     = if length > 3 then 3 else length
-          container.textContent = container.textContent.replace(hook.cmd, "")
+          container.textContent = container.textContent.replace(match[0], "")
           @_format container
           if offset > length
             range.setStart container, offset - length
             @editor.selection.selectRange range
           button.command "h#{level}"
 
+
       # Blockquote
       blockquote:
         cmd: /^>{1}/
         block: true
-        callback: (hook, range, offset) =>
+        callback: (hook, range, match) =>
           button = @editor.toolbar.findButton "blockquote"
           return if button is null or button.disabled
+
+          offset    = range.startOffset
           container = range.commonAncestorContainer
-          container.textContent = container.textContent.replace(hook.cmd, "")
+          container.textContent = container.textContent.replace(match[0], "")
           @_format container
           if offset > 1
             range.setStart container, offset - 1
             @editor.selection.selectRange range
           button.command()
 
+
       # Code
       code:
         cmd: /^`{3}/
         block: true
-        callback: (hook, range, offset) =>
+        callback: (hook, range, match) =>
           button = @editor.toolbar.findButton "code"
           return if button is null or button.disabled
+
+          offset    = range.startOffset
           container = range.commonAncestorContainer
-          container.textContent = container.textContent.replace(hook.cmd, "")
+          container.textContent = container.textContent.replace(match[0], "")
           @_format container
           setTimeout =>
             range.setStart container, offset - 3
@@ -57,124 +65,146 @@ class SimditorMarkdown extends Plugin
             button.command()
           , 5
 
+
       # Horizontal rule
       hr:
         cmd: /^\*{3,}$|^\-{3,}$/
         block: true
-        callback: (hook, range, offset) =>
+        callback: (hook, range, match) =>
           button    = @editor.toolbar.findButton "hr"
           return if button is null or button.disabled
+
+          offset    = range.startOffset
           container = range.commonAncestorContainer
-          content   = container.textContent
-          container.textContent = container.textContent.replace(hook.cmd, "")
+          container.textContent = container.textContent.replace(match[0], "")
           @_format container
           button.command()
 
+
       # Emphasis: bold
       bold:
-        cmd: /\*{2}([^\*]+)\*{2}$|_{2}([^_]+)_{2}$/
+        cmd: /\*{2}([^\*]+)\*{2}|_{2}([^_]+)_{2}/
         block: false
-        callback: (hook, range, offset) =>
+        callback: (hook, range, match) =>
           button    = @editor.toolbar.findButton "bold"
           return if button is null or button.disabled
+
+          offset    = range.startOffset
           container = range.commonAncestorContainer
-          content   = container.textContent
-          container.textContent = content.replace(hook.cmd, "$1$2")
-          range = document.createRange()
-          range.setStart container, content.match(hook.cmd).index
-          range.setEnd   container, content.length - 4
+          length    = match.index + match[0].length
+          container.textContent = container.textContent.replace(match[0], match[1] or match[2])
+          range.setStart container, match.index
+          range.setEnd   container, length - 4
           @editor.selection.selectRange range
 
           if button.status $(range.commonAncestorContainer.parentNode)
             @editor.selection.setRangeAtEndOf container
           else
             button.command()
-            @editor.selection.setRangeAtEndOf container
-            button.command()
+            if offset > length
+              range.setStart container, offset - length
+              range.setEnd   container, offset - length
+              @editor.selection.selectRange range
+            else
+              @editor.selection.setRangeAtEndOf container
+              button.command()
+
 
       # Emphasis: italic
       italic:
-        cmd: /\*([^\*]+)\*$|_([^_]+)_$/
+        cmd: /\*([^\*]+)\*|_([^_]+)_/
         block: false
-        callback: (hook, range, offset) =>
+        callback: (hook, range, match) =>
           button    = @editor.toolbar.findButton "italic"
           return if button is null or button.disabled
+
+          offset    = range.startOffset
           container = range.commonAncestorContainer
-          content   = container.textContent
-          container.textContent = content.replace(hook.cmd, "$1$2")
-          range = document.createRange()
-          range.setStart container, content.match(hook.cmd).index
-          range.setEnd   container, content.length - 2
+          length    = match.index + match[0].length
+          container.textContent = container.textContent.replace(match[0], match[1] or match[2])
+          range.setStart container, match.index
+          range.setEnd   container, length - 2
           @editor.selection.selectRange range
 
           if button.status $(range.commonAncestorContainer.parentNode)
             @editor.selection.setRangeAtEndOf container
           else
             button.command()
-            @editor.selection.setRangeAtEndOf container
-            button.command()
+            if offset > length
+              range.setStart container, offset - length
+              range.setEnd   container, offset - length
+              @editor.selection.selectRange range
+            else
+              @editor.selection.setRangeAtEndOf container
+              button.command()
+
 
       # Unordered list
       ul:
         cmd: /^\*{1}|^\+{1}|^\-{1}/
         block: true
-        callback: (hook, range, offset) =>
+        callback: (hook, range, match) =>
           button    = @editor.toolbar.findButton "ul"
           return if button is null or button.disabled
+
+          offset    = range.startOffset
           container = range.commonAncestorContainer
-          container.textContent = container.textContent.replace(hook.cmd, "")
+          container.textContent = container.textContent.replace(match[0], "")
           @_format container
           if offset > 1
             range.setStart container, offset - 1
             @editor.selection.selectRange range
           button.command()
 
+
       # Ordered list
       ol:
         cmd: /^[0-9][\.\u3002]{1}/
         block: true
-        callback: (hook, range, offset) =>
+        callback: (hook, range, match) =>
           button    = @editor.toolbar.findButton "ol"
           return if button is null or button.disabled
+
+          offset    = range.startOffset
           container = range.commonAncestorContainer
-          container.textContent = container.textContent.replace(hook.cmd, "")
+          container.textContent = container.textContent.replace(match[0], "")
           @_format container
           if offset > 2
             range.setStart container, offset - 2
             @editor.selection.selectRange range
           button.command()
 
+
       # Image
       image:
-        cmd: /!\[(.+)\]\((.+)\)$/
+        cmd: /!\[(.+)\]\((.+)\)/
         block: false
-        callback: (hook, range) =>
+        callback: (hook, range, match) =>
           button    = @editor.toolbar.findButton "image"
           return if button is null or button.disabled
+
           container = range.commonAncestorContainer
-          content   = container.textContent
-          container.textContent = container.textContent.replace(hook.cmd, "")
+          container.textContent = container.textContent.replace(match[0], "")
           @editor.selection.setRangeAtEndOf container
-          params = content.match hook.cmd
-          button.command params[2]
+          button.command match[2]
+
 
       # Link
       link:
-        cmd: /\[(.+)\]\((.+)\)$|\<((.[^\[\]\(\)]+))\>$/
+        cmd: /\[(.+)\]\((.+)\)|\<((.[^\[\]\(\)]+))\>/
         block: false
-        callback: (hook, range) =>
+        callback: (hook, range, match) =>
           button    = @editor.toolbar.findButton "link"
           return if button is null or button.disabled
+
+          offset    = range.startOffset
           container = range.commonAncestorContainer
-          content   = container.textContent
-          container.textContent = container.textContent.replace(hook.cmd, "")
-          params = content.match hook.cmd
-          text   = params[1] or params[3]
-          url    = params[2] or params[4]
-          if params.index > 0
-            range.setStart container, params.index
+          container.textContent = container.textContent.replace(match[0], "")
+          text   = match[1] or match[3]
+          url    = match[2] or match[4]
+          if match.index > 0
+            range.setStart container, match.index
             @editor.selection.selectRange range
-          button.command text, url
 
 
   _init: ->
@@ -192,14 +222,15 @@ class SimditorMarkdown extends Plugin
       return unless range and container and container.nodeType == 3
 
       content = container.textContent
-      for button, hook of @markdownConfigs
-        if hook.cmd instanceof RegExp and hook.cmd.test(content)
+      for name, hook of @markdownConfigs
+        match = content.match(hook.cmd)
+        if hook.cmd instanceof RegExp and match isnt null
           newRange = document.createRange()
           newRange.setStart container, 0
           newRange.setEnd   container, 0
           continue if hook.block and not @editor.selection.rangeAtStartOf(container.parentNode, newRange)
           e.preventDefault() if e.which is 32
-          hook.callback(hook, range, range.startOffset)
+          hook.callback(hook, range, match)
           break
 
 
