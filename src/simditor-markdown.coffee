@@ -97,7 +97,6 @@ class SimditorMarkdown extends Plugin
         cmd: /\*([^\*]+)\*$|_([^_]+)_$/
         block: false
         callback: (hook, range, offset) =>
-          console.log 0
           button    = @editor.toolbar.findButton "italic"
           return if button is null or button.disabled
           container = range.commonAncestorContainer
@@ -193,7 +192,6 @@ class SimditorMarkdown extends Plugin
       return unless range and container and container.nodeType == 3
 
       content = container.textContent
-      console.log content
       for button, hook of @markdownConfigs
         if hook.cmd instanceof RegExp and hook.cmd.test(content)
           newRange = document.createRange()
