@@ -1,7 +1,7 @@
 {
   "name": "simditor-markdown",
-  "version": "0.0.1",
-  "description": "A plugin markdown Simditor",
+  "version": "1.0.0",
+  "description": "A Markdown plugin for Simditor",
   "main": "src/simditor-markdown.coffee",
   "repository": {
     "type": "git",

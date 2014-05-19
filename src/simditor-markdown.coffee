@@ -56,7 +56,7 @@ class Markdown extends Plugin
       cmd: /^#+/
       block: true
       callback: (hook, range, match, $blockEl) ->
-        button    = @editor.toolbar.findButton "title"
+        button = @editor.toolbar.findButton "title"
         return if button is null or button.disabled
         level = Math.min match[0].length, 3
         button.command "h#{level}"
