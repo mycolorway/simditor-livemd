@@ -8,15 +8,16 @@ class Markdown extends Plugin
     super args...
     @editor = @widget
 
+
   _init: ->
     return unless @opts.markdown
 
-    @editor.on 'keypress', (e) =>
+    @editor.on "keypress", (e) =>
       return unless e.which is 32 or e.which is 13
 
-      range = @editor.selection.getRange()
+      range     = @editor.selection.getRange()
       container = range?.commonAncestorContainer
-      return unless range and range.collapsed and container and container.nodeType == 3
+      return unless range and range.collapsed and container and container.nodeType is 3
 
       content = container.textContent
       for name, hook of @hooks
@@ -25,18 +26,18 @@ class Markdown extends Plugin
         continue unless match
 
         if hook.block
-          $blockEl = @editor.util.closestBlockEl container
+          $blockEl  = @editor.util.closestBlockEl container
           testRange = document.createRange()
           testRange.setStart container, 0
           testRange.collapse true
           continue unless @editor.selection.rangeAtStartOf($blockEl, testRange)
 
-        e.preventDefault() if e.which is 32
+        e.preventDefault() if e.which is 32 or name is "code"
 
         cmdStart = match.index
-        cmdEnd = match[0].length + match.index
+        cmdEnd   = match[0].length + match.index
         range.setStart container, cmdStart
-        range.setEnd container, cmdEnd
+        range.setEnd   container, cmdEnd
 
         if hook.block
           range.deleteContents()
@@ -105,11 +106,12 @@ class Markdown extends Plugin
         range.insertNode textNode
         range.selectNode textNode
         @editor.selection.selectRange range
-        document.execCommand 'bold'
+        document.execCommand "bold"
         @editor.selection.setRangeAfter textNode
-        document.execCommand 'bold'
-        @editor.trigger 'valuechanged'
-        @editor.trigger 'selectionchanged'
+        document.execCommand "bold"
+        @editor.trigger "valuechanged"
+        @editor.trigger "selectionchanged"
+
 
     # Emphasis: italic
     italic:
@@ -125,11 +127,11 @@ class Markdown extends Plugin
         range.insertNode textNode
         range.selectNode textNode
         @editor.selection.selectRange range
-        document.execCommand 'italic'
+        document.execCommand "italic"
         @editor.selection.setRangeAfter textNode
-        document.execCommand 'italic'
-        @editor.trigger 'valuechanged'
-        @editor.trigger 'selectionchanged'
+        document.execCommand "italic"
+        @editor.trigger "valuechanged"
+        @editor.trigger "selectionchanged"
 
 
     # Unordered list
@@ -137,7 +139,7 @@ class Markdown extends Plugin
       cmd: /^\*{1}|^\+{1}|^\-{1}/
       block: true
       callback: (hook, range, match, $blockEl) ->
-        button    = @editor.toolbar.findButton "ul"
+        button = @editor.toolbar.findButton "ul"
         return if button is null or button.disabled
         button.command()
 
@@ -147,7 +149,7 @@ class Markdown extends Plugin
       cmd: /^[0-9][\.\u3002]{1}/
       block: true
       callback: (hook, range, match, $blockEl) ->
-        button    = @editor.toolbar.findButton "ol"
+        button = @editor.toolbar.findButton "ol"
         return if button is null or button.disabled
         button.command()
 
@@ -157,7 +159,7 @@ class Markdown extends Plugin
       cmd: /!\[(.+)\]\((.+)\)/
       block: true
       callback: (hook, range, match) ->
-        button    = @editor.toolbar.findButton "image"
+        button = @editor.toolbar.findButton "image"
         return if button is null or button.disabled
         button.command match[2]
 
@@ -167,14 +169,19 @@ class Markdown extends Plugin
       cmd: /\[(.+)\]\((.+)\)|\<((.[^\[\]\(\)]+))\>/
       block: false
       callback: (hook, range, match) ->
-        button    = @editor.toolbar.findButton "link"
+        button = @editor.toolbar.findButton "link"
         return if button is null or button.disabled
 
+        $link = $("<a/>", {
+          text: match[1] or match[3]
+          href: match[2] or match[4]
+          target: "_blank"
+        })
         range.deleteContents()
-        @editor.selection.selectRange range
-        text   = match[1] or match[3]
-        url    = match[2] or match[4]
-        button.command text, url
+        range.insertNode $link[0]
+        @editor.selection.setRangeAfter $link
+        @editor.trigger "valuechanged"
+        @editor.trigger "selectionchanged"
 
 
 Simditor.connect Markdown
