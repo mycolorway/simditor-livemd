@@ -23,7 +23,7 @@ class Markdown extends Plugin
 
       content = container.textContent
       for name, hook of @hooks
-        continue unless hook.cmd instanceof RegExp
+        continue unless hook and hook.cmd instanceof RegExp
         match = content.match hook.cmd
         continue unless match
 
