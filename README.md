@@ -21,6 +21,19 @@ new Simditor({
 })
 ```
 
+如果需要禁用某些语法，可以在配置里这样写：
+
+```javascript
+new Simditor({
+	textarea: textareaElement,
+	...,
+	markdown: {
+		title: false,  // 禁用标题
+		hr: false      // 禁用分割线
+	}
+})
+```
+
 ### 语法
 
 支持以下 Markdown 语法，在 Simditor 中输入后通过空格或回车触发：

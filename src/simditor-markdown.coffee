@@ -12,6 +12,8 @@ class Markdown extends Plugin
   _init: ->
     return unless @opts.markdown
 
+    $.extend(@hooks, @opts.markdown) if typeof @opts.markdown is "object"
+
     @editor.on "keypress", (e) =>
       return unless e.which is 32 or e.which is 13
 
