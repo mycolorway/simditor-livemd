@@ -96,7 +96,7 @@ class Markdown extends Plugin
 
     # Emphasis: bold
     bold:
-      cmd: /\*{2}([^\*]+)\*{2}|_{2}([^_]+)_{2}/
+      cmd: /\*{2}([^\*]+)\*{2}$|_{2}([^_]+)_{2}$/
       block: false
       callback: (hook, range, match) ->
         button = @editor.toolbar.findButton "bold"
@@ -116,24 +116,24 @@ class Markdown extends Plugin
 
 
     # Emphasis: italic
-    italic:
-      cmd: /\*([^\*]+)\*|_([^_]+)_/
-      block: false
-      callback: (hook, range, match) ->
-        button = @editor.toolbar.findButton "italic"
-        return if button is null or button.disabled
+    # italic:
+    #   cmd: /\*([^\*]+)\*|_([^_]+)_/
+    #   block: false
+    #   callback: (hook, range, match) ->
+    #     button = @editor.toolbar.findButton "italic"
+    #     return if button is null or button.disabled
 
-        text = match[1] or match[2]
-        textNode = document.createTextNode text
-        range.deleteContents()
-        range.insertNode textNode
-        range.selectNode textNode
-        @editor.selection.selectRange range
-        document.execCommand "italic"
-        @editor.selection.setRangeAfter textNode
-        document.execCommand "italic"
-        @editor.trigger "valuechanged"
-        @editor.trigger "selectionchanged"
+    #     text = match[1] or match[2]
+    #     textNode = document.createTextNode text
+    #     range.deleteContents()
+    #     range.insertNode textNode
+    #     range.selectNode textNode
+    #     @editor.selection.selectRange range
+    #     document.execCommand "italic"
+    #     @editor.selection.setRangeAfter textNode
+    #     document.execCommand "italic"
+    #     @editor.trigger "valuechanged"
+    #     @editor.trigger "selectionchanged"
 
 
     # Unordered list
