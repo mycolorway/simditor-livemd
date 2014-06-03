@@ -19,7 +19,8 @@ class Markdown extends Plugin
 
       range     = @editor.selection.getRange()
       container = range?.commonAncestorContainer
-      return unless range and range.collapsed and container and container.nodeType is 3
+      return unless range and range.collapsed and container and container.nodeType is 3 \
+        and not $(container).parent("pre").length
 
       content = container.textContent
       for name, hook of @hooks
