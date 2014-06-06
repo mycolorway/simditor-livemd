@@ -12,11 +12,10 @@ class Markdown extends Plugin
   _init: ->
     return unless @opts.markdown
 
-    @hooks = {}
     if typeof @opts.markdown is "object"
-      $.extend(true, @hooks, @defaultHooks, @opts.markdown)
+      hooks = $.extend({}, @hooks, @opts.markdown)
     else
-      @hooks = @defaultHooks
+      hooks = $.extend({}, @hooks)
 
     @editor.on "keypress", (e) =>
       return unless e.which is 32 or e.which is 13
@@ -27,7 +26,7 @@ class Markdown extends Plugin
         and not $(container).parent("pre").length
 
       content = container.textContent
-      for name, hook of @hooks
+      for name, hook of hooks
         continue unless hook and hook.cmd instanceof RegExp
         match = content.match hook.cmd
         continue unless match
@@ -57,7 +56,7 @@ class Markdown extends Plugin
         break
 
 
-  defaultHooks:
+  hooks:
     # Header
     title:
       cmd: /^#+/
