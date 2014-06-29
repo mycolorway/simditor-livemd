@@ -27,6 +27,7 @@ class Markdown extends Plugin
 
       content = container.textContent
       for name, hook of hooks
+        return if e.which is 13 and not hook.enterKey
         continue unless hook and hook.cmd instanceof RegExp
         match = content.match hook.cmd
         continue unless match
@@ -61,6 +62,7 @@ class Markdown extends Plugin
     title:
       cmd: /^#+/
       block: true
+      enterKey: true
       callback: (hook, range, match, $blockEl) ->
         button = @editor.toolbar.findButton "title"
         return if button is null or button.disabled
@@ -72,6 +74,7 @@ class Markdown extends Plugin
     blockquote:
       cmd: /^>{1}/
       block: true
+      enterKey: true
       callback: (hook, range, match, $blockEl) ->
         button = @editor.toolbar.findButton "blockquote"
         return if button is null or button.disabled
@@ -82,6 +85,7 @@ class Markdown extends Plugin
     code:
       cmd: /^`{3}/
       block: true
+      enterKey: true
       callback: (hook, range, match, $blockEl) ->
         button = @editor.toolbar.findButton "code"
         return if button is null or button.disabled
@@ -92,6 +96,7 @@ class Markdown extends Plugin
     hr:
       cmd: /^\*{3,}$|^\-{3,}$/
       block: true
+      enterKey: true
       callback: (hook, range, match, $blockEl) ->
         button = @editor.toolbar.findButton "hr"
         return if button is null or button.disabled
@@ -142,7 +147,7 @@ class Markdown extends Plugin
 
     # Unordered list
     ul:
-      cmd: /^\*{1}|^\+{1}|^\-{1}/
+      cmd: /^\*{1}$|^\+{1}$|^\-{1}$/
       block: true
       callback: (hook, range, match, $blockEl) ->
         button = @editor.toolbar.findButton "ul"
@@ -152,7 +157,7 @@ class Markdown extends Plugin
 
     # Ordered list
     ol:
-      cmd: /^[0-9][\.\u3002]{1}/
+      cmd: /^[0-9][\.\u3002]{1}$/
       block: true
       callback: (hook, range, match, $blockEl) ->
         button = @editor.toolbar.findButton "ol"
@@ -162,7 +167,7 @@ class Markdown extends Plugin
 
     # Image
     image:
-      cmd: /!\[(.+)\]\((.+)\)/
+      cmd: /!\[(.+)\]\((.+)\)$/
       block: true
       callback: (hook, range, match) ->
         button = @editor.toolbar.findButton "image"
@@ -172,7 +177,7 @@ class Markdown extends Plugin
 
     # Link
     link:
-      cmd: /\[(.+)\]\((.+)\)|\<((.[^\[\]\(\)]+))\>/
+      cmd: /\[(.+)\]\((.+)\)$|\<((.[^\[\]\(\)]+))\>$/
       block: false
       callback: (hook, range, match) ->
         button = @editor.toolbar.findButton "link"
