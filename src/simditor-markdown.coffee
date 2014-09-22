@@ -51,7 +51,7 @@ class Markdown extends Plugin
           $blockEl.append(@editor.util.phBr) if @editor.util.isEmptyNode($blockEl)
           @editor.selection.setRangeAtEndOf $blockEl
 
-        result = hook.callback.call(@, hook, range, match, $blockEl, button)
+        result = hook.callback.call(@, button, hook, range, match, $blockEl)
         e.preventDefault() if (e.which is 32 or name is "code") and result
         break
 
@@ -62,7 +62,7 @@ class Markdown extends Plugin
       cmd: /^#+/
       block: true
       enterKey: true
-      callback: (hook, range, match, $blockEl, button) ->
+      callback: (button, hook, range, match, $blockEl) ->
         level = Math.min match[0].length, 3
         button.command "h#{level}"
 
@@ -72,7 +72,7 @@ class Markdown extends Plugin
       cmd: /^>{1}/
       block: true
       enterKey: true
-      callback: (hook, range, match, $blockEl, button) ->
+      callback: (button, hook, range, match, $blockEl) ->
         button.command()
 
 
@@ -81,7 +81,7 @@ class Markdown extends Plugin
       cmd: /^`{3}/
       block: true
       enterKey: true
-      callback: (hook, range, match, $blockEl, button) ->
+      callback: (button, hook, range, match, $blockEl) ->
         button.command()
 
 
@@ -90,7 +90,7 @@ class Markdown extends Plugin
       cmd: /^\*{3,}$|^\-{3,}$/
       block: true
       enterKey: true
-      callback: (hook, range, match, $blockEl, button) ->
+      callback: (button, hook, range, match, $blockEl) ->
         button.command()
 
 
@@ -98,7 +98,7 @@ class Markdown extends Plugin
     bold:
       cmd: /\*{2}([^\*]+)\*{2}$|_{2}([^_]+)_{2}$/
       block: false
-      callback: (hook, range, match) ->
+      callback: (button, hook, range, match) ->
         text = match[1] or match[2]
         textNode = document.createTextNode text
         @editor.selection.selectRange range
@@ -117,7 +117,7 @@ class Markdown extends Plugin
     italic:
       cmd: /\*([^\*]+)\*$/
       block: false
-      callback: (hook, range, match) ->
+      callback: (button, hook, range, match) ->
         text = match[1] or match[2]
         textNode = document.createTextNode text
         @editor.selection.selectRange range
@@ -136,7 +136,7 @@ class Markdown extends Plugin
     ul:
       cmd: /^\*{1}$|^\+{1}$|^\-{1}$/
       block: true
-      callback: (hook, range, match, $blockEl, button) ->
+      callback: (button, hook, range, match, $blockEl) ->
         button.command()
 
 
@@ -144,7 +144,7 @@ class Markdown extends Plugin
     ol:
       cmd: /^[0-9][\.\u3002]{1}$/
       block: true
-      callback: (hook, range, match, $blockEl, button) ->
+      callback: (button, hook, range, match, $blockEl) ->
         button.command()
 
 
@@ -152,7 +152,7 @@ class Markdown extends Plugin
     image:
       cmd: /!\[(.+)\]\((.+)\)$/
       block: true
-      callback: (hook, range, match, $blockEl, button) ->
+      callback: (button, hook, range, match) ->
         button.command match[2]
 
 
