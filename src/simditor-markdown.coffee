@@ -31,6 +31,8 @@ class Markdown extends Plugin
         continue unless hook and hook.cmd instanceof RegExp
         match = content.match hook.cmd
         continue unless match
+        button = @editor.toolbar.findButton name
+        continue if button is null or button.disabled
 
         if hook.block
           $blockEl  = @editor.util.closestBlockEl container
@@ -38,8 +40,6 @@ class Markdown extends Plugin
           testRange.setStart container, 0
           testRange.collapse true
           continue unless @editor.selection.rangeAtStartOf($blockEl, testRange)
-
-        e.preventDefault() if e.which is 32 or name is "code"
 
         cmdStart = match.index
         cmdEnd   = match[0].length + match.index
@@ -50,10 +50,9 @@ class Markdown extends Plugin
           range.deleteContents()
           $blockEl.append(@editor.util.phBr) if @editor.util.isEmptyNode($blockEl)
           @editor.selection.setRangeAtEndOf $blockEl
-        else
-          @editor.selection.selectRange range
 
-        hook.callback.call(@, hook, range, match, $blockEl)
+        result = hook.callback.call(@, button, hook, range, match, $blockEl)
+        e.preventDefault() if (e.which is 32 or name is "code") and result
         break
 
 
@@ -63,9 +62,7 @@ class Markdown extends Plugin
       cmd: /^#+/
       block: true
       enterKey: true
-      callback: (hook, range, match, $blockEl) ->
-        button = @editor.toolbar.findButton "title"
-        return if button is null or button.disabled
+      callback: (button, hook, range, match, $blockEl) ->
         level = Math.min match[0].length, 3
         button.command "h#{level}"
 
@@ -75,9 +72,7 @@ class Markdown extends Plugin
       cmd: /^>{1}/
       block: true
       enterKey: true
-      callback: (hook, range, match, $blockEl) ->
-        button = @editor.toolbar.findButton "blockquote"
-        return if button is null or button.disabled
+      callback: (button, hook, range, match, $blockEl) ->
         button.command()
 
 
@@ -86,9 +81,7 @@ class Markdown extends Plugin
       cmd: /^`{3}/
       block: true
       enterKey: true
-      callback: (hook, range, match, $blockEl) ->
-        button = @editor.toolbar.findButton "code"
-        return if button is null or button.disabled
+      callback: (button, hook, range, match, $blockEl) ->
         button.command()
 
 
@@ -97,9 +90,7 @@ class Markdown extends Plugin
       cmd: /^\*{3,}$|^\-{3,}$/
       block: true
       enterKey: true
-      callback: (hook, range, match, $blockEl) ->
-        button = @editor.toolbar.findButton "hr"
-        return if button is null or button.disabled
+      callback: (button, hook, range, match, $blockEl) ->
         button.command()
 
 
@@ -107,12 +98,10 @@ class Markdown extends Plugin
     bold:
       cmd: /\*{2}([^\*]+)\*{2}$|_{2}([^_]+)_{2}$/
       block: false
-      callback: (hook, range, match) ->
-        button = @editor.toolbar.findButton "bold"
-        return if button is null or button.disabled
-
+      callback: (button, hook, range, match) ->
         text = match[1] or match[2]
         textNode = document.createTextNode text
+        @editor.selection.selectRange range
         range.deleteContents()
         range.insertNode textNode
         range.selectNode textNode
@@ -128,12 +117,10 @@ class Markdown extends Plugin
     italic:
       cmd: /\*([^\*]+)\*$/
       block: false
-      callback: (hook, range, match) ->
-        button = @editor.toolbar.findButton "italic"
-        return if button is null or button.disabled
-
+      callback: (button, hook, range, match) ->
         text = match[1] or match[2]
         textNode = document.createTextNode text
+        @editor.selection.selectRange range
         range.deleteContents()
         range.insertNode textNode
         range.selectNode textNode
@@ -149,9 +136,7 @@ class Markdown extends Plugin
     ul:
       cmd: /^\*{1}$|^\+{1}$|^\-{1}$/
       block: true
-      callback: (hook, range, match, $blockEl) ->
-        button = @editor.toolbar.findButton "ul"
-        return if button is null or button.disabled
+      callback: (button, hook, range, match, $blockEl) ->
         button.command()
 
 
@@ -159,9 +144,7 @@ class Markdown extends Plugin
     ol:
       cmd: /^[0-9][\.\u3002]{1}$/
       block: true
-      callback: (hook, range, match, $blockEl) ->
-        button = @editor.toolbar.findButton "ol"
-        return if button is null or button.disabled
+      callback: (button, hook, range, match, $blockEl) ->
         button.command()
 
 
@@ -169,9 +152,7 @@ class Markdown extends Plugin
     image:
       cmd: /!\[(.+)\]\((.+)\)$/
       block: true
-      callback: (hook, range, match) ->
-        button = @editor.toolbar.findButton "image"
-        return if button is null or button.disabled
+      callback: (button, hook, range, match) ->
         button.command match[2]
 
 
@@ -180,14 +161,15 @@ class Markdown extends Plugin
       cmd: /\[(.+)\]\((.+)\)$|\<((.[^\[\]\(\)]+))\>$/
       block: false
       callback: (hook, range, match) ->
-        button = @editor.toolbar.findButton "link"
-        return if button is null or button.disabled
+        url = match[2] or match[4]
+        return false unless /[a-zA-z]+:\/\/[^\s]*/.test url
 
         $link = $("<a/>", {
           text: match[1] or match[3]
-          href: match[2] or match[4]
+          href: url
           target: "_blank"
         })
+        @editor.selection.selectRange range
         range.deleteContents()
         range.insertNode $link[0]
         @editor.selection.setRangeAfter $link
