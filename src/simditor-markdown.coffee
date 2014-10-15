@@ -1,17 +1,12 @@
-class Markdown extends Plugin
+class SimditorMarkdown extends SimpleModule
 
   opts:
     markdown: false
 
-
-  constructor: (args...) ->
-    super args...
-    @editor = @widget
-
-
   _init: ->
     return unless @opts.markdown
 
+    @editor = @_module
     if typeof @opts.markdown is "object"
       hooks = $.extend({}, @hooks, @opts.markdown)
     else
@@ -177,4 +172,4 @@ class Markdown extends Plugin
         @editor.trigger "selectionchanged"
 
 
-Simditor.connect Markdown
+Simditor.connect SimditorMarkdown

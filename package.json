@@ -1,6 +1,6 @@
 {
   "name": "simditor-markdown",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A Markdown plugin for Simditor",
   "main": "src/simditor-markdown.coffee",
   "repository": {
@@ -14,8 +14,8 @@
   },
   "homepage": "https://github.com/mycolorway/simditor-markdown",
   "devDependencies": {
-    "grunt": "~0.4.4",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-coffee": "~0.10.1"
+    "grunt": "0.x",
+    "grunt-contrib-watch": "0.x",
+    "grunt-contrib-coffee": "0.x"
   }
 }

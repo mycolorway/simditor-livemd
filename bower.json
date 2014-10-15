@@ -1,6 +1,6 @@
 {
   "name": "simditor-markdown",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "homepage": "https://github.com/mycolorway/simditor-markdown",
   "authors": [
     "ruochenlyu <kshift.lv@gmail.com>"
@@ -16,13 +16,11 @@
     "**/.*",
     "node_modules",
     "vendor",
-    "Gemfile",
-    "Gemfile.lock",
     "Gruntfile.coffee",
     "package.json"
   ],
   "dependencies": {
-    "jquery": "~2.1.0",
-    "simditor": "~1.0.0"
+    "jquery": "2.x",
+    "simditor": "2.x"
   }
 }

@@ -5,13 +5,15 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON 'package.json'
 
     coffee:
-      markdown:
+      src:
+        options:
+          bare: true
         files:
           'lib/simditor-markdown.js': 'src/simditor-markdown.coffee'
     watch:
-      scripts:
+      src:
         files: ['src/*.coffee']
-        tasks: ['coffee']
+        tasks: ['coffee:src']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-watch'
