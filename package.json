@@ -16,6 +16,7 @@
   "devDependencies": {
     "grunt": "0.x",
     "grunt-contrib-watch": "0.x",
-    "grunt-contrib-coffee": "0.x"
+    "grunt-contrib-coffee": "0.x",
+    "grunt-umd": "2.x"
   }
 }
