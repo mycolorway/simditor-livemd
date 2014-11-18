@@ -1,5 +1,7 @@
 class SimditorMarkdown extends SimpleModule
 
+  @pluginName: 'Markdown'
+
   opts:
     markdown: false
 
