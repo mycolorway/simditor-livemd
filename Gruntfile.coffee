@@ -9,7 +9,7 @@ module.exports = (grunt) ->
         options:
           bare: true
         files:
-          'lib/simditor-markdown.js': 'src/simditor-markdown.coffee'
+          'lib/simditor-livemd.js': 'src/simditor-livemd.coffee'
     watch:
       src:
         files: ['src/*.coffee']
@@ -17,11 +17,11 @@ module.exports = (grunt) ->
 
     umd:
       all:
-        src: 'lib/simditor-markdown.js'
+        src: 'lib/simditor-livemd.js'
         template: 'umd.hbs'
-        amdModuleId: 'simditor-markdown'
-        objectToExport: 'SimditorMarkdown'
-        globalAlias: 'SimditorMarkdown'
+        amdModuleId: 'simditor-livemd'
+        objectToExport: 'SimditorLivemd'
+        globalAlias: 'SimditorLivemd'
         deps:
           'default': ['$', 'SimpleModule', 'Simditor']
           amd: ['jquery', 'simple-module', 'simditor']

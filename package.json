@@ -1,18 +1,18 @@
 {
-  "name": "simditor-markdown",
+  "name": "simditor-livemd",
   "version": "2.0.0",
   "description": "A Markdown plugin for Simditor",
-  "main": "src/simditor-markdown.coffee",
+  "main": "src/simditor-livemd.coffee",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mycolorway/simditor-markdown.git"
+    "url": "git://github.com/mycolorway/simditor-livemd.git"
   },
   "author": "ruochenlyu",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mycolorway/simditor-markdown/issues"
+    "url": "https://github.com/mycolorway/simditor-livemd/issues"
   },
-  "homepage": "https://github.com/mycolorway/simditor-markdown",
+  "homepage": "https://github.com/mycolorway/simditor-livemd",
   "devDependencies": {
     "grunt": "0.x",
     "grunt-contrib-watch": "0.x",

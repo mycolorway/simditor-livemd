@@ -1,23 +1,23 @@
-class SimditorMarkdown extends SimpleModule
+class SimditorLivemd extends SimpleModule
 
-  @pluginName: 'Markdown'
+  @pluginName: 'Livemd'
 
   opts:
-    markdown: false
+    livemd: false
 
   _init: ->
-    return unless @opts.markdown
+    return unless @opts.livemd
 
     @editor = @_module
-    if typeof @opts.markdown is "object"
-      hooks = $.extend({}, @hooks, @opts.markdown)
+    if typeof @opts.livemd is "object"
+      hooks = $.extend({}, @hooks, @opts.livemd)
     else
       hooks = $.extend({}, @hooks)
 
     @editor.on "keypress", (e) =>
       return unless e.which is 32 or e.which is 13
 
-      range     = @editor.selection.getRange()
+      range = @editor.selection.getRange()
       container = range?.commonAncestorContainer
       return unless range and range.collapsed and container and container.nodeType is 3 \
         and not $(container).parent("pre").length
@@ -32,16 +32,16 @@ class SimditorMarkdown extends SimpleModule
         continue if button is null or button.disabled
 
         if hook.block
-          $blockEl  = @editor.util.closestBlockEl container
+          $blockEl = @editor.util.closestBlockEl container
           testRange = document.createRange()
           testRange.setStart container, 0
           testRange.collapse true
           continue unless @editor.selection.rangeAtStartOf($blockEl, testRange)
 
         cmdStart = match.index
-        cmdEnd   = match[0].length + match.index
+        cmdEnd = match[0].length + match.index
         range.setStart container, cmdStart
-        range.setEnd   container, cmdEnd
+        range.setEnd container, cmdEnd
 
         if hook.block
           range.deleteContents()
@@ -174,4 +174,4 @@ class SimditorMarkdown extends SimpleModule
         @editor.trigger "selectionchanged"
 
 
-Simditor.connect SimditorMarkdown
+Simditor.connect SimditorLivemd

@@ -1,14 +1,14 @@
-simditor-markdown
-=================
+simditor-livemd
+===============
 
 [Simditor](http://simditor.tower.im/) 的官方扩展，通过 Markdown 语法快速便捷地输入内容。
 
 ### 如何使用
 
-在 Simditor 的基础上额外引用 simditor-markdown 的脚本。
+在 Simditor 的基础上额外引用 simditor-livemd 的脚本。
 
 ```html
-<script src="/assets/javascripts/simditor-markdown.js"></script>
+<script src="/assets/javascripts/simditor-livemd.js"></script>
 ```
 
 配置
@@ -17,7 +17,7 @@ simditor-markdown
 new Simditor({
 	textarea: textareaElement,
 	...,
-	markdown: true
+	livemd: true
 })
 ```
 
@@ -27,7 +27,7 @@ new Simditor({
 new Simditor({
 	textarea: textareaElement,
 	...,
-	markdown: {
+	livemd: {
 		title: false,  // 禁用标题
 		hr: false      // 禁用分割线
 	}
