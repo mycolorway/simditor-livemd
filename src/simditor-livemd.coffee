@@ -17,7 +17,7 @@ class SimditorLivemd extends SimpleModule
     @editor.on "keypress", (e) =>
       return unless e.which is 32 or e.which is 13
 
-      range = @editor.selection.getRange()
+      range = @editor.selection.range()
       container = range?.commonAncestorContainer
       return unless range and range.collapsed and container and container.nodeType is 3 \
         and not $(container).parent("pre").length
@@ -32,7 +32,7 @@ class SimditorLivemd extends SimpleModule
         continue if button is null or button.disabled
 
         if hook.block
-          $blockEl = @editor.util.closestBlockEl container
+          $blockEl = @editor.selection.blockNodes().last()
           testRange = document.createRange()
           testRange.setStart container, 0
           testRange.collapse true
@@ -98,11 +98,11 @@ class SimditorLivemd extends SimpleModule
       callback: (button, hook, range, match) ->
         text = match[1] or match[2]
         textNode = document.createTextNode text
-        @editor.selection.selectRange range
+        @editor.selection.range range
         range.deleteContents()
         range.insertNode textNode
         range.selectNode textNode
-        @editor.selection.selectRange range
+        @editor.selection.range range
         document.execCommand "bold"
         @editor.selection.setRangeAfter textNode
         document.execCommand "bold"
@@ -117,11 +117,11 @@ class SimditorLivemd extends SimpleModule
       callback: (button, hook, range, match) ->
         text = match[1] or match[2]
         textNode = document.createTextNode text
-        @editor.selection.selectRange range
+        @editor.selection.range range
         range.deleteContents()
         range.insertNode textNode
         range.selectNode textNode
-        @editor.selection.selectRange range
+        @editor.selection.range range
         document.execCommand "italic"
         @editor.selection.setRangeAfter textNode
         document.execCommand "italic"
@@ -166,7 +166,7 @@ class SimditorLivemd extends SimpleModule
           href: url
           target: "_blank"
         })
-        @editor.selection.selectRange range
+        @editor.selection.range range
         range.deleteContents()
         range.insertNode $link[0]
         @editor.selection.setRangeAfter $link
