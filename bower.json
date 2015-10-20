@@ -1,6 +1,6 @@
 {
   "name": "simditor-livemd",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "homepage": "https://github.com/mycolorway/simditor-livemd",
   "authors": [
     "ruochenlyu <kshift.lv@gmail.com>"
@@ -21,6 +21,6 @@
   ],
   "dependencies": {
     "jquery": "2.x",
-    "simditor": "~2.2.0"
+    "simditor": "2.3.x"
   }
 }
