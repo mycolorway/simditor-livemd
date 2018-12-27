@@ -2,7 +2,7 @@
   "name": "simditor-livemd",
   "version": "2.1.1",
   "description": "A Markdown plugin for Simditor",
-  "main": "src/simditor-livemd.coffee",
+  "main": "lib/simditor-livemd.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/mycolorway/simditor-livemd.git"
