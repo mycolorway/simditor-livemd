@@ -1,6 +1,6 @@
 {
   "name": "simditor-livemd",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A Markdown plugin for Simditor",
   "main": "lib/simditor-livemd.js",
   "repository": {
